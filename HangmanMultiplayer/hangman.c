@@ -73,8 +73,8 @@ char * get_random_word() {
     return random_word;
 }
 
-int main() {
-    int players;
+int main(int argc, char *argv[]) {
+    int players = 0;
     
     int num_wrong_guesses = 0;
     char * wrong_guesses = calloc(6, sizeof(char));
@@ -84,10 +84,26 @@ int main() {
     
     int win = 0;
 
+
+
     // Get number of players and solution word
     while (1) {
-        printf("Number of players: ");
-        scanf(" %d", &players);
+        if (argc < 2) { 
+            printf("Number of players: ");
+            scanf(" %d", &players);
+        } else if (argc == 2) {
+            if (strcmp(argv[1], "-p1") == 0) 
+                players = 1;
+            else if (strcmp(argv[1], "-p2") == 0)
+                players = 2;
+            else {
+                printf("Flags are `-p1` for one player game and `p2` for two player game.\n");
+                return 1;
+            }
+        } else {
+            printf("Flags are `-p1` for one player game and `p2` for two player game.\n");
+            return 1;
+        }
 
         if (players == 1) {
             char* rand_word = get_random_word();
