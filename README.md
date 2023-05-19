@@ -1,5 +1,5 @@
 # TerminalGames
-Games to be played in CLI (1 or 2 player). All machine code is compiled using *gcc* on MacOS with M1 processor (ARM64).
+Games to be played in CLI (1 or 2 player) written in C. All machine code is compiled using *gcc* on MacOS with M1 processor (ARM64).
 
 Games included/planned:
  - [x] Hangman
