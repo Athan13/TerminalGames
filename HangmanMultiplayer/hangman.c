@@ -14,7 +14,7 @@ int print_hangman(int n) {
 
     assert(0 <= n & n <= 6);
 
-    textfile = fopen("hangmen.txt", "r");
+    textfile = fopen("/Users/athan/Projects/TerminalGames/HangmanMultiplayer/hangmen.txt", "r");
 
     while ((ch = fgetc(textfile)) != EOF) {
         if (ch == (n + '0')) {
@@ -42,7 +42,7 @@ char * get_random_word() {
 
     char * random_word = calloc(MAX_LENGTH, sizeof(char));
 
-    word_file = fopen("60kWords.txt", "r");
+    word_file = fopen("/Users/athan/Projects/TerminalGames/HangmanMultiplayer/60kWords.txt", "r");
 
     // Get number of lines in the file
     while ((c = fgetc(word_file)) != EOF) {
@@ -52,7 +52,7 @@ char * get_random_word() {
 
     fclose(word_file);
 
-    word_file = fopen("60kWords.txt", "r");
+    word_file = fopen("/Users/athan/Projects/TerminalGames/HangmanMultiplayer/60kWords.txt", "r");
 
     // Get random number
     srand(time(NULL));
@@ -69,6 +69,7 @@ char * get_random_word() {
     }
     
     fclose(word_file);
+    printf("%s\n", random_word);
     return random_word;
 }
 
@@ -86,7 +87,7 @@ int main() {
     // Get number of players and solution word
     while (1) {
         printf("Number of players: ");
-        scanf("%d", &players);
+        scanf(" %d", &players);
 
         if (players == 1) {
             char* rand_word = get_random_word();
