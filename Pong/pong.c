@@ -6,7 +6,7 @@
 # include <time.h>
 # include <math.h>
 
-# define X_DIMENSION 37
+# define X_DIMENSION 40
 # define Y_DIMENSION 20
 # define BALL_SPEED 1
 # define FRAME_RATE 5
@@ -25,7 +25,7 @@ char * generate_string(int length, char character)
 
 int main(int argc, char const *argv[])
 {
-    printf("-- USE A TO MOVE LEFT AND D TO MOVE RIGHT --\n");
+    printf("\ec\n-- USE A TO MOVE LEFT AND D TO MOVE RIGHT --\n");
     sleep(1);
 
 
@@ -84,14 +84,17 @@ int main(int argc, char const *argv[])
         // Reset screen
         wmove(win, 0, 0);
         nanosleep(&rest, &_);
+        rest.tv_nsec *= 0.998;
         wrefresh(win);
 
         // Update ball positions
+        if (ball_y == Y_DIMENSION + 1)
+            break;
         if (ball_x == 0 || ball_x == X_DIMENSION - 1)
             ball_dx *= -1;
-        else if (ball_y == 0 || ball_y == Y_DIMENSION - 1)
+        if (ball_y == 0)
             ball_dy *= -1;
-        else if ((ball_y + 1 == paddle_y) && (paddle_x <= ball_x) && (ball_x <= paddle_x + paddle_lenth - 1))
+        if ((ball_y + 1 == paddle_y) && (paddle_x <= ball_x) && (ball_x <= paddle_x + paddle_lenth - 1))
             ball_dy *= -1;
 
         ball_x += ball_dx;
@@ -102,12 +105,10 @@ int main(int argc, char const *argv[])
 
         if (user_input != ERR) {
             switch (user_input) {
-                case 'A':
-                    if (paddle_x > 1) {paddle_x--;}
-                case 'D':
-                    if (paddle_x + paddle_lenth < X_DIMENSION) {paddle_x++;}
-                default:
-                    ;
+                case 'a':
+                    if (paddle_x > 0) {paddle_x--; break;}
+                case 'd':
+                    if (paddle_x + paddle_lenth < X_DIMENSION - 1) {paddle_x++;}
             }
         }
     }
@@ -119,7 +120,8 @@ int main(int argc, char const *argv[])
     free(top_wall);
     free(paddle);
 
-    printf("You lose!\n");
+    printf("\ec");
+    printf("-- YOU LOSE! --\n");
 
     return 0;
 }
