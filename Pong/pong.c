@@ -10,7 +10,7 @@
 # define Y_DIMENSION 20
 # define BALL_SPEED 1
 # define FRAME_RATE 5
-# define MARGINS 1
+# define MARGINS 3
 
 char * generate_string(int length, char character)
 {
@@ -28,10 +28,18 @@ int main(int argc, char const *argv[])
     printf("-- USE A TO MOVE LEFT AND D TO MOVE RIGHT --\n");
     sleep(1);
 
-    initscr();
+
+    // Set up ncurses
+    initscr();  // initialise
+
+    WINDOW *win = newwin(Y_DIMENSION, X_DIMENSION, MARGINS+1, MARGINS+1);  // new window for pong
+
+    noecho();            // don't output pressed characters
+    nodelay(win, TRUE);  // remove delay for inputed characters (don't wait until newline)
+    cbreak();            // use non-standard characters (arrow keys, control, etc) --> KeyboardInterrupt is unaffected
 
     // Define walls
-    char * top_wall = generate_string(X_DIMENSION, '-');
+    char * top_wall = generate_string(X_DIMENSION+1, '-');
     char side_wall = '|';
 
     // Define paddle
@@ -45,75 +53,43 @@ int main(int argc, char const *argv[])
     char * paddle = generate_string(paddle_lenth, '=');
     int paddle_x = (X_DIMENSION / 2) - (paddle_lenth / 2); int paddle_y = Y_DIMENSION - 1;
 
-    noecho(); nodelay(stdscr, TRUE); cbreak();  // make sure key input works as intended --> ncurses library
-
     // Define ball
     srand(time(NULL));
     char ball = 'O';
     int ball_x = (rand() % (X_DIMENSION - 2) + 1); int ball_y = Y_DIMENSION - 3; int ball_dx = BALL_SPEED; int ball_dy = -1 * BALL_SPEED;
 
-    // Define margins
-    char * side_margin = generate_string(MARGINS, ' ');
-    char * top_margin = generate_string(MARGINS, '\n');
-
-    char * inner_margin;
-
     // Define sleep time
     struct timespec rest, _;
     rest.tv_sec = (int) 1 / FRAME_RATE; rest.tv_nsec = (int) (pow(10, 9) / FRAME_RATE) % (int) pow(10, 9);
 
+    // Print pong box
+    mvaddstr(MARGINS, MARGINS, top_wall);
+    mvaddstr(Y_DIMENSION + MARGINS + 1, MARGINS, top_wall);
+
+    for (int i = 1; i < Y_DIMENSION + 1; i++) {
+        mvaddch(i + MARGINS, MARGINS, side_wall);
+        mvaddch(i + MARGINS, X_DIMENSION + MARGINS + 1, side_wall);
+    }
+
+    refresh();
+
     // Main game loop
     while (1) {
+        werase(win);
 
-        // Print pong box
-        printw("%s", top_margin);
-        printw("%s", side_margin);
-        printw("%s\n", top_wall);
-
-        for (int i = 1; i <= Y_DIMENSION - 1; i++) {
-            printw("%s", side_margin);
-            printw("%c\n", side_wall);
-
-            // Print paddle
-            if (i == paddle_y) {
-                inner_margin = generate_string(paddle_x - 2, ' ');
-                printw("%s", inner_margin);
-                printw("%s", paddle);
-                free(inner_margin);
-
-                inner_margin = generate_string(X_DIMENSION - paddle_x - paddle_lenth - 2, ' ');
-                printw("%s", inner_margin);
-                free(inner_margin);
-            // Print ball
-            } else if (i == ball_y) {
-                inner_margin = generate_string(ball_x - 2, ' ');
-                printw("%s", inner_margin);
-                printw("%c", ball);
-                free(inner_margin);
-
-                inner_margin = generate_string(X_DIMENSION - ball_x - 2, ' ');
-                printw("%s", inner_margin);
-                free(inner_margin);
-            } else {
-                inner_margin = generate_string(X_DIMENSION - 2, ' ');
-                printw("%s", inner_margin);
-                free(inner_margin);
-            }
-
-            printw("%c\n", side_wall);
-        }
-
-        printw("%s", side_margin);
-        printw("%s\n", top_wall);
+        // Print ball and paddle
+        mvwaddch(win, ball_y, ball_x, ball);
+        mvwaddstr(win, paddle_y, paddle_x, paddle);
 
         // Reset screen
+        wmove(win, 0, 0);
         nanosleep(&rest, &_);
-        refresh();
+        wrefresh(win);
 
         // Update ball positions
-        if (ball_x == 1 || ball_x == X_DIMENSION - 2)
+        if (ball_x == 0 || ball_x == X_DIMENSION - 1)
             ball_dx *= -1;
-        else if (ball_y == 1 || ball_y == Y_DIMENSION)
+        else if (ball_y == 0 || ball_y == Y_DIMENSION - 1)
             ball_dy *= -1;
         else if ((ball_y + 1 == paddle_y) && (paddle_x <= ball_x) && (ball_x <= paddle_x + paddle_lenth - 1))
             ball_dy *= -1;
@@ -122,22 +98,26 @@ int main(int argc, char const *argv[])
         ball_y += ball_dy;
 
         // Update paddle position
-        char user_input = getch();
+        char user_input = wgetch(win);
 
-        switch (user_input) {
-            case 'A':
-                if (paddle_x > 1) {paddle_x--;}
-            case 'D':
-                if (paddle_x + paddle_lenth < X_DIMENSION) {paddle_x++;}
-            default:
-                ;
+        if (user_input != ERR) {
+            switch (user_input) {
+                case 'A':
+                    if (paddle_x > 1) {paddle_x--;}
+                case 'D':
+                    if (paddle_x + paddle_lenth < X_DIMENSION) {paddle_x++;}
+                default:
+                    ;
+            }
         }
     }
 
+    // Cleanup
+    delwin(win);
+    endwin();
+
     free(top_wall);
     free(paddle);
-    free(side_margin);
-    free(top_margin);
 
     printf("You lose!\n");
 
