@@ -5,7 +5,6 @@ Games included/planned:
  - [x] Hangman (C)
  - [x] Pong (C)
  - [ ] Wordle
- - [ ] Chrome dinosaur game
  - [ ] Non-specific platformer (original Super Mario Bros. adjacent)
  - [ ] Tic-tac-toe
  - [ ] Anagrams game (NYT Games Spelling Bee adjacent)
