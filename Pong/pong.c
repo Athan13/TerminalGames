@@ -56,7 +56,11 @@ int main(int argc, char const *argv[])
     // Define ball
     srand(time(NULL));
     char ball = 'O';
-    int ball_x = (rand() % (X_DIMENSION - 2) + 1); int ball_y = Y_DIMENSION - 3; int ball_dx = BALL_SPEED; int ball_dy = -1 * BALL_SPEED;
+
+    int ball_x = (rand() % (X_DIMENSION - 4) + 3);
+    int ball_y = Y_DIMENSION - 3;
+    int ball_dx = BALL_SPEED;
+    int ball_dy = -1 * BALL_SPEED;
 
     // Define sleep time
     struct timespec rest, _;
@@ -73,18 +77,26 @@ int main(int argc, char const *argv[])
 
     refresh();
 
+    // Score counter
+    int score = 0;
+
     // Main game loop
     while (1) {
         werase(win);
 
-        // Print ball and paddle
+        // Print ball, paddle and score
         mvwaddch(win, ball_y, ball_x, ball);
         mvwaddstr(win, paddle_y, paddle_x, paddle);
+
+        char scorestr[20];  // if you cause a buffer overflow you win lol
+        sprintf(scorestr, "Score: %d", score);
+
+        mvwaddstr(win, 0, 0, scorestr);
 
         // Reset screen
         wmove(win, 0, 0);
         nanosleep(&rest, &_);
-        rest.tv_nsec *= 0.998;
+        rest.tv_nsec *= 0.999;
         wrefresh(win);
 
         // Update ball positions
@@ -94,8 +106,10 @@ int main(int argc, char const *argv[])
             ball_dx *= -1;
         if (ball_y == 0)
             ball_dy *= -1;
-        if ((ball_y + 1 == paddle_y) && (paddle_x <= ball_x) && (ball_x <= paddle_x + paddle_lenth - 1))
+        if ((ball_y + 1 == paddle_y) && (paddle_x <= ball_x) && (ball_x <= paddle_x + paddle_lenth - 1)) {
+            score += 10;
             ball_dy *= -1;
+        }
 
         ball_x += ball_dx;
         ball_y += ball_dy;
