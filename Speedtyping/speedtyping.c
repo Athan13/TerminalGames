@@ -171,9 +171,6 @@ int main(int argc, char *argv[]) {
         char in_c = wgetch(input_window);
         if (in_c == 27) {  // Escape key
             break;
-        } else if (in_c == 8 && input_word_pos > 0) {  // backspace
-            input_word_pos--;
-            input_word[input_word_pos] = '\0';
         } else if (in_c == ref_c) {
             input_word[input_word_pos] = in_c;
             input_word[input_word_pos + 1] = '\0';
