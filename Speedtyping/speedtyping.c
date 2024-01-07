@@ -8,7 +8,7 @@
 
 #include <ncurses.h>
 
-#define MAX_WIDTH 70
+#define MAX_WIDTH 100
 
 char* get_ref_string() {
     srand(time(NULL));
@@ -16,7 +16,7 @@ char* get_ref_string() {
 
     char* filepath = malloc(11 * sizeof(char));
     sprintf(filepath, "texts/input%d.txt", file_n);
-    FILE* text_f = fopen("texts/input0.txt", "r");
+    FILE* text_f = fopen(filepath, "r");
     free(filepath);
 
     fseek(text_f, 0, SEEK_END);
@@ -138,6 +138,7 @@ int main(int argc, char *argv[]) {
         mvwprintw(ref_text_window, 1, 1, "Time remaining: %d", time);
         wpm = 12 * correct_chars / (start_time - time);
         mvwprintw(ref_text_window, 1, width - 9, "WPM: %d", wpm);
+        
         mvwprintw(ref_text_window, 2, 1, line0);
         mvwprintw(ref_text_window, 3, 1, line1);
         mvwprintw(ref_text_window, 4, 1, line2);
