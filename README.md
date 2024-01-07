@@ -4,6 +4,7 @@ Games to be played in CLI (1 or 2 player) written in C/C++/Rust. All machine cod
 Games included/planned:
  - [x] Hangman (C)
  - [x] Pong (C)
+ - [ ] Speed typing game
  - [ ] Wordle
  - [ ] Non-specific platformer (original Super Mario Bros. adjacent)
  - [ ] Tic-tac-toe
