@@ -73,6 +73,12 @@ char* format_ref_string(int start, size_t length, char* ref_string) {
     return return_c;
 }
 
+void clear_str(char* input_str, char replacement) {
+    int len = strlen(input_str);
+    memset(input_str, replacement, len);
+    input_str[len] = '\0';
+}
+
 int main(int argc, char *argv[]) {
     int time;
     char curr_c;
@@ -117,8 +123,8 @@ int main(int argc, char *argv[]) {
     int input_word_pos = 0;
 
     char input_word[width - 15];
+    memset(input_word, '\0', sizeof(input_word));
     int max_length = (width - 15) * sizeof(char);
-    strcpy(input_word, "");
     int wpm = 0;
 
     // set up string formatter
@@ -138,7 +144,7 @@ int main(int argc, char *argv[]) {
         mvwprintw(ref_text_window, 1, 1, "Time remaining: %d", time);
         wpm = 12 * correct_chars / (start_time - time);
         mvwprintw(ref_text_window, 1, width - 9, "WPM: %d", wpm);
-        
+
         mvwprintw(ref_text_window, 2, 1, line0);
         mvwprintw(ref_text_window, 3, 1, line1);
         mvwprintw(ref_text_window, 4, 1, line2);
@@ -166,7 +172,7 @@ int main(int argc, char *argv[]) {
             line1 = line2;
             line2 = format_ref_string((line_counter + 1) * (width - 2), width - 2, ref_string);
             ref_text_pos = 0;
-            strcpy(input_word, "");
+            clear_str(input_word, ' ');
         }
 
         char in_c = wgetch(input_window);
@@ -181,12 +187,12 @@ int main(int argc, char *argv[]) {
             if (!isspace(in_c)) {
                 correct_chars++;
             } else {
-                strcpy(input_word, "");
+                clear_str(input_word, ' ');
                 input_word_pos = 0;
             }
 
             if (input_word_pos == max_length - 1) {
-                strcpy(input_word, "");
+                clear_str(input_word, ' ');
                 input_word_pos = 0;
             }
         }
