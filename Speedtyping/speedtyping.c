@@ -16,7 +16,7 @@ char* get_ref_string() {
 
     char* filepath = malloc(11 * sizeof(char));
     sprintf(filepath, "texts/input%d.txt", file_n);
-    FILE* text_f = fopen("texts/input0.txt", "r");
+    FILE* text_f = fopen(filepath, "r");
     free(filepath);
 
     fseek(text_f, 0, SEEK_END);
