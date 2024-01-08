@@ -12,7 +12,7 @@
 
 char* get_ref_string() {
     srand(time(NULL));
-    int file_n = rand() % 6;
+    int file_n = rand() % 11;
 
     char* filepath = malloc(11 * sizeof(char));
     sprintf(filepath, "texts/input%d.txt", file_n);
